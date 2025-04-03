@@ -16,23 +16,28 @@ head(countries)
 ```{r}
 genres_updated = merge(genres, movies[, c("id", "rating")], by = "id")
 genres_updated = merge(genres_updated, countries, by = "id")
-genres_updated = genres_updated[!is.na(genres_updated$rating), ]
+merged_files = genres_updated[!is.na(genres_updated$rating), ]
 
-head(genres_updated)
+head(merged_files)
 ```
 
 ```{r}
-anova_genre = aov(rating ~ genre, data = genres_updated)
+anova_genre = aov(rating ~ genre, data = merged_files)
 summary(anova_genre)
 ```
 
 ```{r}
-anova_country = aov(rating ~ country, data = genres_updated)
+anova_country = aov(rating ~ country, data = merged_files)
 summary(anova_country)
 ```
 
 ```{r}
-avg_country = aggregate(rating ~ country, data = genres_updated, FUN = mean)
+avg_country = aggregate(rating ~ country, data = merged_files, FUN = mean)
 avg_country = avg_country[order(-avg_country$rating), ]
 print(avg_country)
+```
+```{r}
+avg_genre = aggregate(rating ~ genre, data = merged_files, FUN = mean)
+avg_genre = avg_genre[order(-avg_genre$rating), ]
+print(avg_genre)
 ```
