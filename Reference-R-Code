@@ -5,16 +5,19 @@ date: "2025-04-03"
 ---
 
 ```{r}
+setwd("~/Downloads")
 movies = read.csv("movies.csv")
 genres = read.csv("genres.csv")
 countries = read.csv("countries.csv")
+actors = read.csv("actors.csv")
 head(movies)
 head(genres)
 head(countries)
+head(actors)
 ```
 
 ```{r}
-genres_updated = merge(genres, movies[, c("id", "rating")], by = "id")
+genres_updated = merge(genres, movies[, c("id", "rating", "minute")], by = "id")
 genres_updated = merge(genres_updated, countries, by = "id")
 merged_files = genres_updated[!is.na(genres_updated$rating), ]
 
@@ -22,7 +25,7 @@ head(merged_files)
 ```
 
 ```{r}
-anova_genre = aov(rating ~ genre, data = merged_files)
+anova_genre <- aov(rating ~ genre, data = merged_files)
 summary(anova_genre)
 ```
 
@@ -34,10 +37,43 @@ summary(anova_country)
 ```{r}
 avg_country = aggregate(rating ~ country, data = merged_files, FUN = mean)
 avg_country = avg_country[order(-avg_country$rating), ]
-print(avg_country)
+head(avg_country)
 ```
 ```{r}
 avg_genre = aggregate(rating ~ genre, data = merged_files, FUN = mean)
 avg_genre = avg_genre[order(-avg_genre$rating), ]
 print(avg_genre)
+
+ratings <- avg_genre$rating
+names(ratings) <- avg_genre$genre
+
+barplot(ratings,
+        las = 2,                    
+        col = "lightblue",          
+        main = "Average Rating by Genre",
+        ylab = "Average Rating",
+        ) 
+
+```
+```{r}
+plot_merged = merged_files[-89175,]
+plot_merged = plot_merged[!is.na(plot_merged$minute) & !is.na(plot_merged$rating), ]
+
+plot(plot_merged$minute, plot_merged$rating, cex = 0.3, xlab = "Minutes", ylab = "Rating")
+quad_model = lm(rating ~ minute + I(minute^2), data = plot_merged)
+x_vals = seq(min(plot_merged$minute), max(plot_merged$minute))
+y_pred = predict(quad_model, newdata = data.frame(minute = x_vals))
+lines(x_vals, y_pred, col = "red", lwd = 3)
+```
+
+```{r}
+head(plot_merged)
+
+merged_files$genre = as.factor(merged_files$genre)
+merged_files$country = as.factor(merged_files$country)
+
+model = lm(rating ~ minute + genre, data = merged_files)
+
+summary(model)
+round(model$coefficients, 4)
 ```
