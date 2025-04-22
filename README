@@ -1,0 +1,41 @@
+Map: The world map illustrates the distribution of filming locations for movies and shows in the dataset. Red indicate a higher concentration of films shot in those areas, while blue represents a lower concentration.
+
+
+
+Feature Importance Permutation: Calculated the feature importance of the following features:
+
+** Features: 'minute', 'actor_1_avg_rating', and 'actor_2_avg_rating' are standardized. ** 
+
+'minute': duration (in minutes)
+
+'genre_encoded': using scikit learn LabelEncoder, split the movie genres into nine categories (the 8 most frequent and an 'other' category).
+
+'actor_1_avg_rating': the average show/movie rating of productions the #1 actor was casted in.
+
+'actor_2_avg_rating': the average show/movie rating of productions the #2 actor was casted in.
+
+**NOTE** To qualify, for 'actor_1_avg_rating' or 'actor_2_avg_rating' the actor/actress must have been casted in at least 10 productions. Otherwise, the fallback value is the 25th percentile average rating of all the actors.
+
+'language_encoded': using scikit learn LabelEncoder, split the languages into nine categories (the 8 most frequent and an 'other' category).
+
+'actor_1_unknown': a dummy variable that indicates if actor #1 was casted in fewer than 10 productions.
+
+'actor_2_unknown': a dummy variable that indicates if actor #2 was casted in fewer than 10 productions.
+
+'title_length_words': the number of words in the production's title.
+
+'studio_encoded': using scikit learn LabelEncoder, split the studios in their own category.
+
+'director_encoded': using scikit learn LabelEncoder, split the directors in their own category.
+
+
+
+Gradient Boosted Model:
+
+
+
+Used the information from the feature importance permutation to remove 'title_length_words', 'studio_encoded', and 'director_encoded'.
+
+Performed a gradient-boosted model.
+
+Not great performace, a R^2 Score of 0.382.
