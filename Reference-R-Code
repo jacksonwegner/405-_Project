@@ -5,7 +5,9 @@ date: "2025-04-03"
 ---
 
 ```{r}
-setwd("~/Downloads")
+library(dplyr)
+
+setwd("/Users/jacksonwegner/Library/Mobile Documents/com~apple~CloudDocs/Stat 405/Project/data")
 movies = read.csv("movies.csv")
 genres = read.csv("genres.csv")
 countries = read.csv("countries.csv")
@@ -44,7 +46,7 @@ avg_genre = aggregate(rating ~ genre, data = merged_files, FUN = mean)
 avg_genre = avg_genre[order(-avg_genre$rating), ]
 print(avg_genre)
 
-ratings <- avg_genre$rating
+ratings = avg_genre$rating
 names(ratings) <- avg_genre$genre
 
 barplot(ratings,
@@ -67,12 +69,28 @@ lines(x_vals, y_pred, col = "red", lwd = 3)
 ```
 
 ```{r}
+reduced_graph = plot_merged %>%
+  filter(minute < 300)
+
+plot(reduced_graph$minute, reduced_graph$rating, cex = 0.3, xlab = "Minutes", ylab = "Rating")
+lin_model = lm(rating ~ minute, data = reduced_graph)
+x_vals = seq(min(reduced_graph$minute), max(reduced_graph$minute))
+y_pred = predict(lin_model, newdata = data.frame(minute = x_vals))
+lines(x_vals, y_pred, col = "red", lwd = 3)
+
+```
+
+```{r}
 head(plot_merged)
 
 merged_files$genre = as.factor(merged_files$genre)
 merged_files$country = as.factor(merged_files$country)
 
 model = lm(rating ~ minute + genre, data = merged_files)
+
+summary(model)
+round(model$coefficients, 4)
+```
 
 summary(model)
 round(model$coefficients, 4)
